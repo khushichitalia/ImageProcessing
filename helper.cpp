@@ -4,20 +4,20 @@
 
 using namespace std;
 
-struct Header {
-    char idLength;
-    char colorMapType;
-    char dataTypeCode;
-    short colorMapOrigin;
-    short colorMapLength;
-    char colorMapDepth;
-    short xOrigin;
-    short yOrigin;
-    short width;
-    short height;
-    char bitsPerPixel;
-    char imageDescriptor;
-};
+//    struct Header {
+//        char idLength;
+//        char colorMapType;
+//        char dataTypeCode;
+//        short colorMapOrigin;
+//        short colorMapLength;
+//        char colorMapDepth;
+//        short xOrigin;
+//        short yOrigin;
+//        short width;
+//        short height;
+//        char bitsPerPixel;
+//        char imageDescriptor;
+//    };
 
 //reads the header data for given image
 void getHeader(Header &H, string fileName) {
@@ -118,6 +118,35 @@ void Addition(unsigned char* pixelArray1,
     }
 }
 
+void Screen(unsigned char* pixelArray1,
+            unsigned char* pixelArray2,
+            unsigned char* screenPixelArray,
+            int size,
+            Header H) {
+    for (int i = 0; i < size * 3; i++) {
+        screenPixelArray[i] = ((1 - ((1 - ((float)pixelArray1[i]/255)) * (1 - ((float)pixelArray2[i]/255)))) * 255) + 0.5f;
+    }
+}
+
+void Overlay(unsigned char* pixelArray1,
+             unsigned char* pixelArray2,
+             unsigned char* overlayPixelArray,
+             int size,
+             Header H) {
+    float NP2;
+    for (int i = 0; i < size * 3; i++) {
+        NP2 = (float)pixelArray2[i]/255;
+
+        if (NP2 <= 0.5) {
+            overlayPixelArray[i] = ((2 * ((float)pixelArray1[i]/255) * NP2) * 255) + 0.5f;
+        }
+
+        if (NP2 > 0.5) {
+            overlayPixelArray[i] = ((1 - (2 * (1 - ((float)pixelArray1[i]/255)) * (1 - NP2))) * 255) + 0.5f;
+        }
+    }
+}
+
 void executeTask1() {
     Header H1;
     Header H2;
@@ -191,3 +220,63 @@ void executeTask6() {
     writePixelArray(pixelArray1, "greenChannelCar.tga", size1, H1);
 }
 
+void executeTask3() {
+    Header H1;
+    Header H2;
+
+    getHeader(H1, "layer1.tga");
+    getHeader(H2, "pattern2.tga");
+
+    int size1 = H1.height * H1.width;
+    unsigned char* pixelArray1 = new unsigned char[size1 * 3];
+
+    int size2 = H2.height * H2.width;
+    unsigned char* pixelArray2 = new unsigned char[size2 * 3];
+
+    populatePixelArray(pixelArray1, "layer1.tga", size1);
+    populatePixelArray(pixelArray2, "pattern2.tga", size2);
+
+    unsigned char* combinedImageArray = new unsigned char[size1 * 3];
+    Multiply(pixelArray1, pixelArray2, combinedImageArray, size1, H1);
+    writePixelArray(combinedImageArray, "Intermediate.tga", size1, H1);
+
+
+    Header H3;
+    getHeader(H3, "text.tga");
+    int size3 = H3.height * H3.width;
+    unsigned char* pixelArray3 = new unsigned char[size3 * 3];
+    populatePixelArray(pixelArray3, "text.tga", size3);
+    unsigned char* screenedImageArray = new unsigned char[size3 * 3];
+    Screen(combinedImageArray, pixelArray3, screenedImageArray, size3, H3);
+    writePixelArray(screenedImageArray, "screenedImage.tga", size3, H3);
+    delete[] pixelArray1;
+    delete[] pixelArray2;
+    delete[] pixelArray3;
+    delete[] combinedImageArray;
+    delete[] screenedImageArray;
+}
+
+void executeTask5() {
+    Header H1;
+    Header H2;
+
+    getHeader(H1, "layer1.tga");
+    getHeader(H2, "pattern1.tga");
+
+    int size1 = H1.height * H1.width;
+    unsigned char* pixelArray1 = new unsigned char[size1 * 3];
+
+    int size2 = H2.height * H2.width;
+    unsigned char* pixelArray2 = new unsigned char[size2 * 3];
+
+    populatePixelArray(pixelArray1, "layer1.tga", size1);
+    populatePixelArray(pixelArray2, "pattern1.tga", size2);
+
+    unsigned char* overlayedImageArray = new unsigned char[size1 * 3];
+    Overlay(pixelArray1, pixelArray2, overlayedImageArray, size1, H1);
+    writePixelArray(overlayedImageArray, "overlayImage.tga", size1, H1);
+
+    delete[] pixelArray1;
+    delete[] pixelArray2;
+    delete[] overlayedImageArray;
+}
