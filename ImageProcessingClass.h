@@ -128,13 +128,15 @@ class ImageProcessing {
             subtractedImage->size = size;
             subtractedImage->populateHeader(H);
             subtractedImage->pixelArray = new unsigned char[subtractedImage->size * 3];
+
             for (int i = 0; i < size * 3; i++) {
-                int newValue = (int)pixelArray[i] - (int)subtractedImage->pixelArray[i];
+                int newValue = (int)pixelArray[i] - (int)secondImage->pixelArray[i];
                 if (newValue < 0) {
                     newValue = 0;
                 }
                 subtractedImage->pixelArray[i] = newValue;
             }
+
             return subtractedImage;
         }
 
@@ -154,7 +156,7 @@ class ImageProcessing {
         }
 
         void AddConstantToChannel(int value, int channelNumber) {
-            for (int i = 0; i < size; i += 3) {
+            for (int i = 0; i < size * 3; i += 3) {
                 int newValue = pixelArray[i + channelNumber] + value;
 
                 if (newValue > 255) {
@@ -163,6 +165,94 @@ class ImageProcessing {
 
                 pixelArray[i + channelNumber] = newValue;
             }
+        }
+
+        void MultiplyConstantToChannel(int value, int channelNumber) {
+            for (int i = 0; i < size * 3; i += 3) {
+                int newValue = ((((float)pixelArray[i + channelNumber]/255) * value) * 255) + 0.5f;
+
+                if (newValue > 255) {
+                    newValue = 255;
+                }
+
+                pixelArray[i + channelNumber] = newValue;
+            }
+        }
+
+        //for task 8
+        ImageProcessing** SeparateChannel() {
+            ImageProcessing* redChannel = new ImageProcessing;
+            ImageProcessing* blueChannel = new ImageProcessing;
+            ImageProcessing* greenChannel = new ImageProcessing;
+
+            redChannel->size = size;
+            blueChannel->size = size;
+            greenChannel->size = size;
+
+            redChannel->populateHeader(H);
+            blueChannel->populateHeader(H);
+            greenChannel->populateHeader(H);
+
+            redChannel->pixelArray = new unsigned char[size * 3];
+            blueChannel->pixelArray = new unsigned char[size * 3];
+            greenChannel->pixelArray = new unsigned char[size * 3];
+
+            for (int i = 0; i < size * 3; i += 3) {
+                blueChannel->pixelArray[i] = pixelArray[i];
+                blueChannel->pixelArray[i + 1] = pixelArray[i];
+                blueChannel->pixelArray[i + 2] = pixelArray[i];
+
+                greenChannel->pixelArray[i] = pixelArray[i + 1];
+                greenChannel->pixelArray[i + 1] = pixelArray[i + 1];
+                greenChannel->pixelArray[i + 2] = pixelArray[i + 1];
+
+                redChannel->pixelArray[i] = pixelArray[i + 2];
+                redChannel->pixelArray[i + 1] = pixelArray[i + 2];
+                redChannel->pixelArray[i + 2] = pixelArray[i + 2];
+            }
+
+            ImageProcessing** imageArray = new ImageProcessing*[3];
+            imageArray[0] = blueChannel;
+            imageArray[1] = greenChannel;
+            imageArray[2] = redChannel;
+
+            return imageArray;
+        }
+
+        //for task 9
+        void CombineChannel(ImageProcessing* blueImage, ImageProcessing* greenImage, ImageProcessing* redImage) {
+            for (int i = 0; i < size * 3; i += 3) {
+                pixelArray[i] = blueImage->pixelArray[i];
+                pixelArray[i + 1] = greenImage->pixelArray[i + 1];
+                pixelArray[i + 2] = redImage->pixelArray[i + 2];
+            }
+        }
+
+        void FlipImage() {
+            unsigned char* flippedPixelArray = new unsigned char[size * 3];
+
+//            //for (int i = 0; i < size * 3; i++) {
+//                flippedPixelArray[i] = pixelArray[size - 1 - i];
+//                //flippedPixelArray[i + 1] = pixelArray[size - i];
+//                //flippedPixelArray[i + 2] = pixelArray[size - i + 1];
+//            //}
+
+            for (int i = 0; i < H.height; i++) {
+                for (int j = 0; j < H.width * 3; j++) {
+                    int srcIndex = (i * H.width * 3) + j;
+                    int destIndex = ((H.height - 1 - i) * H.width * 3) + (H.width * 3 - j - 3);
+
+                    flippedPixelArray[destIndex] = pixelArray[srcIndex];
+                    flippedPixelArray[destIndex + 1] = pixelArray[srcIndex + 1];
+                    flippedPixelArray[destIndex + 2] = pixelArray[srcIndex + 2];
+//                    flippedPixelArray[i * H.height + j] = pixelArray[H.height * (H.height - i - 1) + j];
+//                    flippedPixelArray[i * H.height + j + 1] = pixelArray[H.height * (H.height - i - 1) + j + 1];
+//                    flippedPixelArray[i * H.height + j + 2] = pixelArray[H.height * (H.height - i - 1) + j + 2];
+                }
+            }
+
+            delete[] pixelArray;
+            pixelArray = flippedPixelArray;
         }
 
         ImageProcessing* Screen(ImageProcessing* secondImage) {
