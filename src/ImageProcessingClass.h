@@ -231,24 +231,10 @@ class ImageProcessing {
         void FlipImage() {
             unsigned char* flippedPixelArray = new unsigned char[size * 3];
 
-//            //for (int i = 0; i < size * 3; i++) {
-//                flippedPixelArray[i] = pixelArray[size - 1 - i];
-//                //flippedPixelArray[i + 1] = pixelArray[size - i];
-//                //flippedPixelArray[i + 2] = pixelArray[size - i + 1];
-//            //}
-
-            for (int i = 0; i < H.height; i++) {
-                for (int j = 0; j < H.width * 3; j++) {
-                    int srcIndex = (i * H.width * 3) + j;
-                    int destIndex = ((H.height - 1 - i) * H.width * 3) + (H.width * 3 - j - 3);
-
-                    flippedPixelArray[destIndex] = pixelArray[srcIndex];
-                    flippedPixelArray[destIndex + 1] = pixelArray[srcIndex + 1];
-                    flippedPixelArray[destIndex + 2] = pixelArray[srcIndex + 2];
-//                    flippedPixelArray[i * H.height + j] = pixelArray[H.height * (H.height - i - 1) + j];
-//                    flippedPixelArray[i * H.height + j + 1] = pixelArray[H.height * (H.height - i - 1) + j + 1];
-//                    flippedPixelArray[i * H.height + j + 2] = pixelArray[H.height * (H.height - i - 1) + j + 2];
-                }
+            for (int i = 0; i < size; i++) {
+                flippedPixelArray[i * 3] = pixelArray[(size - i - 1) * 3];
+                flippedPixelArray[(i * 3) + 1] = pixelArray[((size - i - 1) * 3) + 1];
+                flippedPixelArray[(i * 3) + 2] = pixelArray[((size - i - 1) * 3) + 2];
             }
 
             delete[] pixelArray;
