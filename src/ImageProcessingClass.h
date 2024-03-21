@@ -25,7 +25,9 @@ class ImageProcessing {
         Header H;
         unsigned char* pixelArray;
 
-        ImageProcessing() {}
+        ImageProcessing() {
+            pixelArray = nullptr;
+        }
 
         ImageProcessing(string file) {
             fileName = file;
@@ -37,6 +39,22 @@ class ImageProcessing {
 
         ~ImageProcessing() {
             delete[] pixelArray;
+        }
+
+        //copy assignment operator
+        ImageProcessing& operator=(ImageProcessing& other) {
+            if (&other != this) {
+                fileName = other.fileName;
+                size = other.size;
+                populateHeader(other.H);
+
+                delete[] pixelArray;
+                pixelArray = new unsigned char[size * 3];
+                for (int i = 0; i < size * 3; i++) {
+                    pixelArray[i] = other.pixelArray[i];
+                }
+            }
+            return *this;
         }
 
         void getHeader() {
@@ -227,6 +245,7 @@ class ImageProcessing {
                 pixelArray[i + 2] = redImage->pixelArray[i + 2];
             }
         }
+
 
         void FlipImage() {
             unsigned char* flippedPixelArray = new unsigned char[size * 3];

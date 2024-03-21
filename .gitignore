@@ -3,3 +3,4 @@ cmake-build-debug/*
 *.exe
 CMakeLists.txt
 output
+*out
