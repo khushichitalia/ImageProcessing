@@ -181,6 +181,10 @@ class ImageProcessing {
                     newValue = 255;
                 }
 
+                if (newValue < 0) {
+                    newValue = 0;
+                }
+
                 pixelArray[i + channelNumber] = newValue;
             }
         }
