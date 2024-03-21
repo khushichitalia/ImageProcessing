@@ -79,93 +79,139 @@ using namespace std;
 //    task10_1->writePixelArray("output/part10.tga");
 //}
 
+void printHelp() {
+    cout << "Project 2: Image Processing, Spring 2024\nUsage:\n./project2.out [output] [firstImage] [method] [...]" << endl;
+}
+
 int main(int argc, char *argv[]) {
+    if (argc == 1) {
+        printHelp();
+    }
+
     string outputFile = argv[1];
     string inputFile = argv[2];
     ImageProcessing *finalImage = new ImageProcessing(inputFile);
     for (int i = 3; i < argc;) {
-        if (argv[i] == "multiply") {
+        if ((string)argv[i] == "multiply") {
             ImageProcessing *multiplyImage = new ImageProcessing(argv[i + 1]);
             finalImage = finalImage->Multiply(multiplyImage);
+
+            if (i == 3) {
+                cout << "Multiplying " << (string)argv[i + 1] << " and " << (string)argv[2] << " ..." << endl;
+            }
+
+            else {
+                cout << "... and multiplying " << (string)argv[i + 1] << " from previous step ..." << endl;
+            }
+
             i += 2;
         }
 
-        if (argv[i] == "subtract") {
+        else if ((string)argv[i] == "subtract") {
             ImageProcessing *subtractImage = new ImageProcessing(argv[i + 1]);
             finalImage = finalImage->Subtract(subtractImage);
+
+            if (i == 3) {
+                cout << "Subtracting " << (string)argv[i + 1] << " and " << (string)argv[2] << " ..." << endl;
+            }
+
+            else {
+                cout << "... and subtracting " << (string)argv[i + 1] << " from previous step ..." << endl;
+            }
+
             i += 2;
         }
 
-        if (argv[i] == "overlay") {
+        else if ((string)argv[i] == "overlay") {
             ImageProcessing *overlayImage = new ImageProcessing(argv[i + 1]);
             finalImage = finalImage->Overlay(overlayImage);
             i += 2;
         }
 
-        if (argv[i] == "screen") {
+        else if ((string)argv[i] == "screen") {
             ImageProcessing *screenImage = new ImageProcessing(argv[i + 1]);
             finalImage = finalImage->Overlay(screenImage);
+
+            if (i == 3) {
+                cout << "Subtracting " << (string)argv[i + 1] << " and " << (string)argv[2] << " ..." << endl;
+            }
+
+            else {
+                cout << "... and subtracting " << (string)argv[i + 1] << " from previous step ..." << endl;
+            }
+
             i += 2;
         }
 
-        if (argv[i] == "combine") {
+        else if ((string)argv[i] == "combine") {
             ImageProcessing *greenImage = new ImageProcessing(argv[i + 1]);
             ImageProcessing *blueImage = new ImageProcessing(argv[i + 2]);
             finalImage->CombineChannel(blueImage, greenImage, finalImage);
             i += 3;
         }
 
-        if (argv[i] == "flip") {
+        else if ((string)argv[i] == "flip") {
             finalImage->FlipImage();
             i++;
         }
 
-        if (argv[i] == "onlyred") {
+        else if ((string)argv[i] == "onlyred") {
             ImageProcessing** imageArray = finalImage->SeparateChannel();
             finalImage = imageArray[2];
             i++;
         }
 
-        if (argv[i] == "onlygreen") {
+        else if ((string)argv[i] == "onlygreen") {
             ImageProcessing** imageArray = finalImage->SeparateChannel();
             finalImage = imageArray[1];
             i++;
         }
 
-        if (argv[i] == "onlyblue") {
+        else if ((string)argv[i] == "onlyblue") {
             ImageProcessing** imageArray = finalImage->SeparateChannel();
             finalImage = imageArray[0];
             i++;
         }
 
-        if (argv[i] == "addred") {
+        else if ((string)argv[i] == "addred") {
             finalImage->AddConstantToChannel(stoi(argv[i + 1]), 2);
             i += 2;
         }
 
-        if (argv[i] == "addgreen") {
+        else if ((string)argv[i] == "addgreen") {
             finalImage->AddConstantToChannel(stoi(argv[i + 1]), 1);
             i += 2;
         }
 
-        if (argv[i] == "addblue") {
+        else if ((string)argv[i] == "addblue") {
             finalImage->AddConstantToChannel(stoi(argv[i + 1]), 0);
             i += 2;
         }
 
-        if (argv[i] == "scalered") {
+        else if ((string)argv[i] == "scalered") {
             finalImage->MultiplyConstantToChannel(stoi(argv[i + 1]), 2);
             i += 2;
         }
 
-        if (argv[i] == "scalegreen") {
+        else if ((string)argv[i] == "scalegreen") {
             finalImage->MultiplyConstantToChannel(stoi(argv[i + 1]), 1);
             i += 2;
         }
 
-        if (argv[i] == "scaleblue") {
+        else if ((string)argv[i] == "scaleblue") {
             finalImage->MultiplyConstantToChannel(stoi(argv[i + 1]), 0);
             i += 2;
         }
+
+        else if ((string)argv[i] == "--help") {
+            printHelp();
+            i++;
+        }
+
+        else {
+            cout << "Invalid method name.";
+        }
     }
+    cout << "... and saving output to " << argv[1] << "!" << endl;
+    finalImage->writePixelArray(argv[1]);
 }
