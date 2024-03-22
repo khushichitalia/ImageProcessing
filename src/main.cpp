@@ -80,19 +80,95 @@ using namespace std;
 //}
 
 void printHelp() {
-    cout << "Project 2: Image Processing, Spring 2024\nUsage:\n./project2.out [output] [firstImage] [method] [...]" << endl;
+    cout << "Project 2: Image Processing, Spring 2024\n\nUsage:\n\t./project2.out [output] [firstImage] [method] [...]" << endl;
+}
+bool checkEnd(string fileName) {
+    int length = fileName.length();
+    if (length < 4) {
+        return false;
+    }
+
+    else if (".tga" != fileName.substr(length - 4, 4)) {
+        return false;
+    }
+
+    return true;
+}
+
+bool fileExists (string fileName) {
+    ifstream image;
+    image.open(fileName, ios::binary);
+    return image.good();
+//    if(image.is_open()) {
+//        return true;
+//    }
+//
+//    else {
+//        return false;
+//    }
+}
+
+bool isDigit(string number) {
+    for (int i = 0; i < number.length(); i++) {
+        if (isdigit((char)number[i])) {
+            continue;
+        }
+
+        else {
+            return false;
+        }
+    }
+    return true;
 }
 
 int main(int argc, char *argv[]) {
     if (argc == 1) {
         printHelp();
+        return 0;
+    }
+
+    if ((string)argv[1] == "--help") {
+        printHelp();
+        return 0;
+    }
+
+    if (checkEnd((string)argv[1]) == false) {
+        cout << "Invalid file name." << endl;
+        return 0;
+    }
+
+    if (checkEnd((string)argv[2]) == false) {
+        cout << "Invalid file name." << endl;
+        return 0;
+    }
+
+    if (fileExists(argv[2]) == false) {
+        cout << "File does not exist." << endl;
+        return 0;
     }
 
     string outputFile = argv[1];
     string inputFile = argv[2];
     ImageProcessing *finalImage = new ImageProcessing(inputFile);
+
     for (int i = 3; i < argc;) {
+
         if ((string)argv[i] == "multiply") {
+            if (argc <= i + 1) {
+                cout << "Missing argument." << endl;
+                return 0;
+            }
+
+            if (checkEnd((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, invalid file name." << endl;
+                return 0;
+            }
+
+            if (fileExists((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, file does not exist." << endl;
+                return 0;
+            }
+
             ImageProcessing *multiplyImage = new ImageProcessing(argv[i + 1]);
             finalImage = finalImage->Multiply(multiplyImage);
 
@@ -108,6 +184,21 @@ int main(int argc, char *argv[]) {
         }
 
         else if ((string)argv[i] == "subtract") {
+            if (argc <= i + 1) {
+                cout << "Missing argument." << endl;
+                return 0;
+            }
+
+            if (checkEnd((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, invalid file name." << endl;
+                return 0;
+            }
+
+            if (fileExists((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, file does not exist." << endl;
+                return 0;
+            }
+
             ImageProcessing *subtractImage = new ImageProcessing(argv[i + 1]);
             finalImage = finalImage->Subtract(subtractImage);
 
@@ -123,12 +214,42 @@ int main(int argc, char *argv[]) {
         }
 
         else if ((string)argv[i] == "overlay") {
+            if (argc <= i + 1) {
+                cout << "Missing argument." << endl;
+                return 0;
+            }
+
+            if (checkEnd((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, invalid file name." << endl;
+                return 0;
+            }
+
+            if (fileExists((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, file does not exist." << endl;
+                return 0;
+            }
+
             ImageProcessing *overlayImage = new ImageProcessing(argv[i + 1]);
             finalImage = finalImage->Overlay(overlayImage);
             i += 2;
         }
 
         else if ((string)argv[i] == "screen") {
+            if (argc <= i + 1) {
+                cout << "Missing argument." << endl;
+                return 0;
+            }
+
+            if (checkEnd((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, invalid file name." << endl;
+                return 0;
+            }
+
+            if (fileExists((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, file does not exist." << endl;
+                return 0;
+            }
+
             ImageProcessing *screenImage = new ImageProcessing(argv[i + 1]);
             finalImage = finalImage->Overlay(screenImage);
 
@@ -144,6 +265,21 @@ int main(int argc, char *argv[]) {
         }
 
         else if ((string)argv[i] == "combine") {
+            if (argc <= i + 1) {
+                cout << "Missing argument." << endl;
+                return 0;
+            }
+
+            if (checkEnd((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, invalid file name." << endl;
+                return 0;
+            }
+
+            if (fileExists((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, file does not exist." << endl;
+                return 0;
+            }
+
             ImageProcessing *greenImage = new ImageProcessing(argv[i + 1]);
             ImageProcessing *blueImage = new ImageProcessing(argv[i + 2]);
             finalImage->CombineChannel(blueImage, greenImage, finalImage);
@@ -156,60 +292,148 @@ int main(int argc, char *argv[]) {
         }
 
         else if ((string)argv[i] == "onlyred") {
+            if (argc <= i + 1) {
+                cout << "Missing argument." << endl;
+                return 0;
+            }
+
+            if (isDigit((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, expected number." << endl;
+                return 0;
+            }
+
             ImageProcessing** imageArray = finalImage->SeparateChannel();
             finalImage = imageArray[2];
             i++;
         }
 
         else if ((string)argv[i] == "onlygreen") {
+            if (argc <= i + 1) {
+                cout << "Missing argument." << endl;
+                return 0;
+            }
+
+            if (isDigit((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, expected number." << endl;
+                return 0;
+            }
+
             ImageProcessing** imageArray = finalImage->SeparateChannel();
             finalImage = imageArray[1];
             i++;
         }
 
         else if ((string)argv[i] == "onlyblue") {
+            if (argc <= i + 1) {
+                cout << "Missing argument." << endl;
+                return 0;
+            }
+
+            if (isDigit((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, expected number." << endl;
+                return 0;
+            }
+
             ImageProcessing** imageArray = finalImage->SeparateChannel();
             finalImage = imageArray[0];
             i++;
         }
 
         else if ((string)argv[i] == "addred") {
+            if (argc <= i + 1) {
+                cout << "Missing argument." << endl;
+                return 0;
+            }
+
+            if (isDigit((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, expected number." << endl;
+                return 0;
+            }
+
             finalImage->AddConstantToChannel(stoi(argv[i + 1]), 2);
             i += 2;
         }
 
         else if ((string)argv[i] == "addgreen") {
+            if (argc <= i + 1) {
+                cout << "Missing argument." << endl;
+                return 0;
+            }
+
+            if (isDigit((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, expected number." << endl;
+                return 0;
+            }
+
             finalImage->AddConstantToChannel(stoi(argv[i + 1]), 1);
             i += 2;
         }
 
         else if ((string)argv[i] == "addblue") {
+            if (argc <= i + 1) {
+                cout << "Missing argument." << endl;
+                return 0;
+            }
+
+            if (isDigit((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, expected number." << endl;
+                return 0;
+            }
+
             finalImage->AddConstantToChannel(stoi(argv[i + 1]), 0);
             i += 2;
         }
 
         else if ((string)argv[i] == "scalered") {
+            if (argc <= i + 1) {
+                cout << "Missing argument." << endl;
+                return 0;
+            }
+
+            if (isDigit((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, expected number." << endl;
+                return 0;
+            }
+
             finalImage->MultiplyConstantToChannel(stoi(argv[i + 1]), 2);
             i += 2;
         }
 
         else if ((string)argv[i] == "scalegreen") {
+            if (argc <= i + 1) {
+                cout << "Missing argument." << endl;
+                return 0;
+            }
+
+            if (isDigit((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, expected number." << endl;
+                return 0;
+            }
+
             finalImage->MultiplyConstantToChannel(stoi(argv[i + 1]), 1);
             i += 2;
         }
 
         else if ((string)argv[i] == "scaleblue") {
+            if (argc <= i + 1) {
+                cout << "Missing argument." << endl;
+                return 0;
+            }
+
+            if (isDigit((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, expected number." << endl;
+                return 0;
+            }
+
             finalImage->MultiplyConstantToChannel(stoi(argv[i + 1]), 0);
             i += 2;
         }
 
-        else if ((string)argv[i] == "--help") {
-            printHelp();
-            i++;
-        }
+
 
         else {
             cout << "Invalid method name.";
+            return 0;
         }
     }
     cout << "... and saving output to " << argv[1] << "!" << endl;
