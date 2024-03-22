@@ -265,7 +265,7 @@ int main(int argc, char *argv[]) {
         }
 
         else if ((string)argv[i] == "combine") {
-            if (argc <= i + 1) {
+            if (argc <= i + 2) {
                 cout << "Missing argument." << endl;
                 return 0;
             }
@@ -275,7 +275,17 @@ int main(int argc, char *argv[]) {
                 return 0;
             }
 
+            if (checkEnd((string)argv[i + 2]) == false) {
+                cout << "Invalid argument, invalid file name." << endl;
+                return 0;
+            }
+
             if (fileExists((string)argv[i + 1]) == false) {
+                cout << "Invalid argument, file does not exist." << endl;
+                return 0;
+            }
+
+            if (fileExists((string)argv[i + 2]) == false) {
                 cout << "Invalid argument, file does not exist." << endl;
                 return 0;
             }
@@ -349,7 +359,6 @@ int main(int argc, char *argv[]) {
                 cout << "Invalid argument, expected number." << endl;
                 return 0;
             }
-
             finalImage->AddConstantToChannel(stoi(argv[i + 1]), 2);
             i += 2;
         }
@@ -429,13 +438,16 @@ int main(int argc, char *argv[]) {
             i += 2;
         }
 
-
-
         else {
             cout << "Invalid method name.";
             return 0;
         }
     }
     cout << "... and saving output to " << argv[1] << "!" << endl;
+
+    if ("output/" != ((string)argv[1]).substr(0, 7)) {
+        (string)argv[1] = ((string)argv[1]).insert(0, "output/");
+    }
+
     finalImage->writePixelArray(argv[1]);
 }
