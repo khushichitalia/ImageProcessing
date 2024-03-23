@@ -180,6 +180,7 @@ int main(int argc, char *argv[]) {
                 cout << "... and multiplying " << (string)argv[i + 1] << " from previous step ..." << endl;
             }
 
+            finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
 
@@ -210,6 +211,7 @@ int main(int argc, char *argv[]) {
                 cout << "... and subtracting " << (string)argv[i + 1] << " from previous step ..." << endl;
             }
 
+            finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
 
@@ -231,6 +233,7 @@ int main(int argc, char *argv[]) {
 
             ImageProcessing *overlayImage = new ImageProcessing(argv[i + 1]);
             finalImage = finalImage->Overlay(overlayImage);
+            finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
 
@@ -261,6 +264,7 @@ int main(int argc, char *argv[]) {
                 cout << "... and subtracting " << (string)argv[i + 1] << " from previous step ..." << endl;
             }
 
+            finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
 
@@ -293,11 +297,13 @@ int main(int argc, char *argv[]) {
             ImageProcessing *greenImage = new ImageProcessing(argv[i + 1]);
             ImageProcessing *blueImage = new ImageProcessing(argv[i + 2]);
             finalImage->CombineChannel(blueImage, greenImage, finalImage);
+            finalImage->writePixelArray((string)argv[1]);
             i += 3;
         }
 
         else if ((string)argv[i] == "flip") {
             finalImage->FlipImage();
+            finalImage->writePixelArray((string)argv[1]);
             i++;
         }
 
@@ -314,6 +320,7 @@ int main(int argc, char *argv[]) {
 
             ImageProcessing** imageArray = finalImage->SeparateChannel();
             finalImage = imageArray[2];
+            finalImage->writePixelArray((string)argv[1]);
             i++;
         }
 
@@ -330,6 +337,7 @@ int main(int argc, char *argv[]) {
 
             ImageProcessing** imageArray = finalImage->SeparateChannel();
             finalImage = imageArray[1];
+            finalImage->writePixelArray((string)argv[1]);
             i++;
         }
 
@@ -346,6 +354,7 @@ int main(int argc, char *argv[]) {
 
             ImageProcessing** imageArray = finalImage->SeparateChannel();
             finalImage = imageArray[0];
+            finalImage->writePixelArray((string)argv[1]);
             i++;
         }
 
@@ -360,6 +369,7 @@ int main(int argc, char *argv[]) {
                 return 0;
             }
             finalImage->AddConstantToChannel(stoi(argv[i + 1]), 2);
+            finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
 
@@ -375,6 +385,7 @@ int main(int argc, char *argv[]) {
             }
 
             finalImage->AddConstantToChannel(stoi(argv[i + 1]), 1);
+            finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
 
@@ -390,6 +401,7 @@ int main(int argc, char *argv[]) {
             }
 
             finalImage->AddConstantToChannel(stoi(argv[i + 1]), 0);
+            finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
 
@@ -405,6 +417,7 @@ int main(int argc, char *argv[]) {
             }
 
             finalImage->MultiplyConstantToChannel(stoi(argv[i + 1]), 2);
+            finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
 
@@ -420,6 +433,7 @@ int main(int argc, char *argv[]) {
             }
 
             finalImage->MultiplyConstantToChannel(stoi(argv[i + 1]), 1);
+            finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
 
@@ -435,6 +449,7 @@ int main(int argc, char *argv[]) {
             }
 
             finalImage->MultiplyConstantToChannel(stoi(argv[i + 1]), 0);
+            finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
 
@@ -445,9 +460,13 @@ int main(int argc, char *argv[]) {
     }
     cout << "... and saving output to " << argv[1] << "!" << endl;
 
-    if ("output/" != ((string)argv[1]).substr(0, 7)) {
-        (string)argv[1] = ((string)argv[1]).insert(0, "output/");
-    }
+//    if ("output/" != ((string)argv[1]).substr(0, 7)) {
+//        (string)argv[1] = ((string)argv[1]).insert(0, "output/");
+//    }
 
-    finalImage->writePixelArray(argv[1]);
+//    if ((string)argv[1] != "out.tga") {
+//        finalImage->writePixelArray((string)argv[1]);
+//    }
+    return 0;
+    //finalImage->writePixelArray(argv[1]);
 }
