@@ -1,9 +1,9 @@
 build:
-	g++ -std=c++11 src/main.cpp -o project2
-	touch output/part17.tga
-	touch output/part18.tga
-	touch output/part19.tga
-	touch output/part20.tga
+	g++ -std=c++11 src/main.cpp -o project2.out
+#	touch output/part17.tga
+#	touch output/part18.tga
+#	touch output/part19.tga
+#	touch output/part20.tga
 
 clean:
 	rm project2.out

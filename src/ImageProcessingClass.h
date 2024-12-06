@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <cmath>
 using namespace std;
 
 struct Header {
@@ -270,6 +271,7 @@ class ImageProcessing {
             screenImage->populateHeader(H);
             screenImage->pixelArray = new unsigned char[screenImage->size * 3];
             for (int i = 0; i < size * 3; i++) {
+                //screenImage->pixelArray[i] = ceil(((1 - ((1 - ((float)pixelArray[i]/255)) * (1 - ((float)secondImage->pixelArray[i]/255)))) * 255));
                 screenImage->pixelArray[i] = ((1 - ((1 - ((float)pixelArray[i]/255)) * (1 - ((float)secondImage->pixelArray[i]/255)))) * 255) + 0.5f;
             }
             return screenImage;

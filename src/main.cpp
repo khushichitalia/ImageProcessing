@@ -109,6 +109,18 @@ bool fileExists (string fileName) {
 }
 
 bool isDigit(string number) {
+    if (number.length() == 1 && number[0] == '-') {
+        return false;
+    }
+
+    if (number[0] == '-') {
+        number = number.substr(1, number.length() -1);
+    }
+
+    if (number[0] == '-' && number[1] == '0') {
+        return false;
+    }
+
     for (int i = 0; i < number.length(); i++) {
         if (isdigit((char)number[i])) {
             continue;
@@ -119,6 +131,16 @@ bool isDigit(string number) {
         }
     }
     return true;
+}
+
+int convertToInt(string num) {
+    if (num[0] == '-') {
+        return -1 * stoi(num.substr(1, num.length() - 1));
+    }
+
+    else {
+        return stoi(num);
+    }
 }
 
 int main(int argc, char *argv[]) {
@@ -254,7 +276,7 @@ int main(int argc, char *argv[]) {
             }
 
             ImageProcessing *screenImage = new ImageProcessing(argv[i + 1]);
-            finalImage = finalImage->Overlay(screenImage);
+            finalImage = finalImage->Screen(screenImage);
 
             if (i == 3) {
                 cout << "Subtracting " << (string)argv[i + 1] << " and " << (string)argv[2] << " ..." << endl;
@@ -308,16 +330,6 @@ int main(int argc, char *argv[]) {
         }
 
         else if ((string)argv[i] == "onlyred") {
-            if (argc <= i + 1) {
-                cout << "Missing argument." << endl;
-                return 0;
-            }
-
-            if (isDigit((string)argv[i + 1]) == false) {
-                cout << "Invalid argument, expected number." << endl;
-                return 0;
-            }
-
             ImageProcessing** imageArray = finalImage->SeparateChannel();
             finalImage = imageArray[2];
             finalImage->writePixelArray((string)argv[1]);
@@ -325,16 +337,6 @@ int main(int argc, char *argv[]) {
         }
 
         else if ((string)argv[i] == "onlygreen") {
-            if (argc <= i + 1) {
-                cout << "Missing argument." << endl;
-                return 0;
-            }
-
-            if (isDigit((string)argv[i + 1]) == false) {
-                cout << "Invalid argument, expected number." << endl;
-                return 0;
-            }
-
             ImageProcessing** imageArray = finalImage->SeparateChannel();
             finalImage = imageArray[1];
             finalImage->writePixelArray((string)argv[1]);
@@ -342,16 +344,6 @@ int main(int argc, char *argv[]) {
         }
 
         else if ((string)argv[i] == "onlyblue") {
-            if (argc <= i + 1) {
-                cout << "Missing argument." << endl;
-                return 0;
-            }
-
-            if (isDigit((string)argv[i + 1]) == false) {
-                cout << "Invalid argument, expected number." << endl;
-                return 0;
-            }
-
             ImageProcessing** imageArray = finalImage->SeparateChannel();
             finalImage = imageArray[0];
             finalImage->writePixelArray((string)argv[1]);
@@ -368,7 +360,8 @@ int main(int argc, char *argv[]) {
                 cout << "Invalid argument, expected number." << endl;
                 return 0;
             }
-            finalImage->AddConstantToChannel(stoi(argv[i + 1]), 2);
+
+            finalImage->AddConstantToChannel(convertToInt(argv[i + 1]), 2);
             finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
@@ -384,7 +377,7 @@ int main(int argc, char *argv[]) {
                 return 0;
             }
 
-            finalImage->AddConstantToChannel(stoi(argv[i + 1]), 1);
+            finalImage->AddConstantToChannel(convertToInt(argv[i + 1]), 1);
             finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
@@ -400,7 +393,7 @@ int main(int argc, char *argv[]) {
                 return 0;
             }
 
-            finalImage->AddConstantToChannel(stoi(argv[i + 1]), 0);
+            finalImage->AddConstantToChannel(convertToInt(argv[i + 1]), 0);
             finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
@@ -416,7 +409,7 @@ int main(int argc, char *argv[]) {
                 return 0;
             }
 
-            finalImage->MultiplyConstantToChannel(stoi(argv[i + 1]), 2);
+            finalImage->MultiplyConstantToChannel(convertToInt(argv[i + 1]), 2);
             finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
@@ -432,7 +425,7 @@ int main(int argc, char *argv[]) {
                 return 0;
             }
 
-            finalImage->MultiplyConstantToChannel(stoi(argv[i + 1]), 1);
+            finalImage->MultiplyConstantToChannel(convertToInt(argv[i + 1]), 1);
             finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
@@ -448,7 +441,7 @@ int main(int argc, char *argv[]) {
                 return 0;
             }
 
-            finalImage->MultiplyConstantToChannel(stoi(argv[i + 1]), 0);
+            finalImage->MultiplyConstantToChannel(convertToInt(argv[i + 1]), 0);
             finalImage->writePixelArray((string)argv[1]);
             i += 2;
         }
